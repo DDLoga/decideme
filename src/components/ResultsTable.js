@@ -5,11 +5,13 @@ export default function ResultsTable({ issue, options, prevStep }) {
   const [scores, setScores] = useState({});
 
   useEffect(() => {
-    const storedScores = localStorage.getItem('scores');
+    const storedScores = localStorage.getItem('weightedCriteriaScores') || localStorage.getItem('scores');
     if (storedScores) {
       setScores(JSON.parse(storedScores));
     }
   }, []);
+
+  const sortedOptions = [...options].sort((a, b) => scores[b] - scores[a]);
 
   return (
     <Box className="space-y-4">
@@ -23,12 +25,12 @@ export default function ResultsTable({ issue, options, prevStep }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {options.map((option) => (
+            {sortedOptions.map((option) => (
               <TableRow key={option}>
                 <TableCell component="th" scope="row">
                   {option}
                 </TableCell>
-                <TableCell align="right">{scores[option] || 0}</TableCell>
+                <TableCell align="right">{scores[option] ? scores[option].toFixed(2) : 'N/A'}</TableCell>
               </TableRow>
             ))}
           </TableBody>

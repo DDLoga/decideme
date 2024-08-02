@@ -15,8 +15,8 @@ export default function ComparisonMethod({ setComparisonMethod, nextStep, prevSt
       <Button fullWidth variant="outlined" onClick={() => handleMethodSelect('weighted-criteria')}>
         Based on weighted Criteria
       </Button>
-      <Button fullWidth variant="outlined" onClick={() => handleMethodSelect('pro-cons')}>
-        Based on pro/cons comparison
+      <Button fullWidth variant="outlined" disabled>
+        Based on pro/cons comparison (Coming soon)
       </Button>
       <Box className="flex justify-between">
         <Button onClick={prevStep}>Back</Button>

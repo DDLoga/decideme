@@ -1,4 +1,5 @@
-'use client';
+'use client';  // Add this line at the top of the file
+
 import { useState } from 'react';
 import { Typography, Box } from '@mui/material';
 import IssueInput from '../components/IssueInput';
@@ -6,6 +7,8 @@ import OptionsInput from '../components/OptionsInput';
 import ComparisonMethod from '../components/ComparisonMethod';
 import CoreValuesSelection from '../components/CoreValuesSelection';
 import CoreValuesSwiper from '../components/CoreValuesSwiper';
+import WeightedCriteriaInput from '../components/WeightedCriteriaInput';
+import WeightedCriteriaComparison from '../components/WeightedCriteriaComparison';
 import ResultsTable from '../components/ResultsTable';
 
 export default function Home() {
@@ -35,20 +38,36 @@ export default function Home() {
       case 3:
         return <ComparisonMethod setComparisonMethod={setComparisonMethod} nextStep={nextStep} prevStep={prevStep} />;
       case 4:
-        return <CoreValuesSelection 
-          issue={issue}
-          options={options}
-          prevStep={prevStep}
-          nextStep={nextStep}
-        />;
+        return comparisonMethod === 'core-values' ? (
+          <CoreValuesSelection 
+            issue={issue}
+            options={options}
+            prevStep={prevStep}
+            nextStep={nextStep}
+          />
+        ) : (
+          <WeightedCriteriaInput
+            prevStep={prevStep}
+            nextStep={nextStep}
+          />
+        );
       case 5:
-        return <CoreValuesSwiper 
-          issue={issue} 
-          options={options} 
-          selectedCoreValues={selectedCoreValues}
-          prevStep={prevStep} 
-          nextStep={nextStep} 
-        />;
+        return comparisonMethod === 'core-values' ? (
+          <CoreValuesSwiper 
+            issue={issue} 
+            options={options} 
+            selectedCoreValues={selectedCoreValues}
+            prevStep={prevStep} 
+            nextStep={nextStep} 
+          />
+        ) : (
+          <WeightedCriteriaComparison
+            issue={issue}
+            options={options}
+            prevStep={prevStep}
+            nextStep={nextStep}
+          />
+        );
       case 6:
         return <ResultsTable 
           issue={issue}
