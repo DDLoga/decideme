@@ -9,30 +9,44 @@ export default function CoreValuesSwiper({ issue, options, selectedCoreValues, p
 
   useEffect(() => {
     const initialScores = options.reduce((acc, option) => {
-      acc[option] = 0;
+      acc[option] = selectedCoreValues.reduce((valueAcc, coreValue) => {
+        valueAcc[coreValue.value] = 0;
+        return valueAcc;
+      }, {});
       return acc;
     }, {});
     setScores(initialScores);
-  }, [options]);
+  }, [options, selectedCoreValues]);
 
   const handleSwipe = (direction) => {
-    if (direction === 'right') {
-      setScores(prev => ({
-        ...prev,
-        [options[currentOption]]: prev[options[currentOption]] + 1
-      }));
-    }
+    const currentCoreValue = selectedCoreValues[currentValue].value;
+    setScores(prev => ({
+      ...prev,
+      [options[currentOption]]: {
+        ...prev[options[currentOption]],
+        [currentCoreValue]: direction === 'right' ? 1 : 0
+      }
+    }));
 
-    if (currentValue < (selectedCoreValues?.length ?? 0) - 1) {
+    if (currentValue < selectedCoreValues.length - 1) {
       setCurrentValue(currentValue + 1);
     } else if (currentOption < options.length - 1) {
       setCurrentOption(currentOption + 1);
       setCurrentValue(0);
     } else {
       // All options and values have been swiped
-      localStorage.setItem('scores', JSON.stringify(scores));
-      nextStep(); // Move to results screen
+      const finalScores = calculateFinalScores();
+      console.log('CoreValuesComparison finalScores:', finalScores);
+      localStorage.setItem('currentScores', JSON.stringify(finalScores));
+      nextStep(finalScores);
     }
+  };
+
+  const calculateFinalScores = () => {
+    return Object.entries(scores).reduce((acc, [option, coreValueScores]) => {
+      acc[option] = Object.values(coreValueScores).reduce((sum, score) => sum + score, 0);
+      return acc;
+    }, {});
   };
 
   const handlers = useSwipeable({

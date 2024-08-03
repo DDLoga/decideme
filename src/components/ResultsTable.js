@@ -11,10 +11,13 @@ export default function ResultsTable({ issue, options, scores: initialScores, pr
       const parsedScores = JSON.parse(storedScores);
       console.log('ResultsTable parsedScores:', parsedScores);
       setScores(parsedScores);
+    } else if (initialScores && Object.keys(initialScores).length > 0) {
+      console.log('Using initialScores:', initialScores);
+      setScores(initialScores);
     } else {
       console.log('No stored scores found');
     }
-  }, []);
+  }, [initialScores]);
 
 
   const sortedOptions = [...options].sort((a, b) => scores[b] - scores[a]);

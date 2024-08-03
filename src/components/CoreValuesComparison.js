@@ -36,9 +36,18 @@ export default function CoreValuesComparison({ issue, options, prevStep }) {
         selectedValues={selectedValues} 
         prevStep={() => setCurrentStep('select')} 
         nextStep={nextStep}
+        calculateFinalScores={calculateFinalScores}
       />;
     }
-  
+    
+    const calculateFinalScores = (scores) => {
+      const finalScores = {};
+      options.forEach(option => {
+        finalScores[option] = selectedValues.reduce((sum, value) => sum + (scores[option]?.[value] || 0), 0);
+      });
+      return finalScores;
+    };
+
     return (
       <Box className="space-y-4">
         <Typography variant="h2">Select Core Values</Typography>
