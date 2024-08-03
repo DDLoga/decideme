@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Button, Card, CardContent } from '@mui/material';
-import { useSwipeable } from 'react-swipeable';
+import { Box, Typography, Button, Card, CardContent, useTheme, useMediaQuery } from '@mui/material';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CoreValuesSwiper({ issue, options, selectedCoreValues, prevStep, nextStep }) {
   const [currentOption, setCurrentOption] = useState(0);
   const [currentValue, setCurrentValue] = useState(0);
   const [scores, setScores] = useState({});
+  const [direction, setDirection] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const initialScores = options.reduce((acc, option) => {
@@ -18,28 +21,41 @@ export default function CoreValuesSwiper({ issue, options, selectedCoreValues, p
     setScores(initialScores);
   }, [options, selectedCoreValues]);
 
-  const handleSwipe = (direction) => {
+  const handleDragEnd = (event, info) => {
+    const threshold = 100; // Distance from center to count as a choice
+    if (info.offset.x < -threshold) {
+      handleChoice('left');
+    } else if (info.offset.x > threshold) {
+      handleChoice('right');
+    }
+  };
+
+  const handleChoice = (chosenDirection) => {
+    setDirection(chosenDirection);
     const currentCoreValue = selectedCoreValues[currentValue].value;
     setScores(prev => ({
       ...prev,
       [options[currentOption]]: {
         ...prev[options[currentOption]],
-        [currentCoreValue]: direction === 'right' ? 1 : 0
+        [currentCoreValue]: chosenDirection === 'right' ? 1 : 0
       }
     }));
 
-    if (currentValue < selectedCoreValues.length - 1) {
-      setCurrentValue(currentValue + 1);
-    } else if (currentOption < options.length - 1) {
-      setCurrentOption(currentOption + 1);
-      setCurrentValue(0);
-    } else {
-      // All options and values have been swiped
-      const finalScores = calculateFinalScores();
-      console.log('CoreValuesComparison finalScores:', finalScores);
-      localStorage.setItem('currentScores', JSON.stringify(finalScores));
-      nextStep(finalScores);
-    }
+    setTimeout(() => {
+      if (currentValue < selectedCoreValues.length - 1) {
+        setCurrentValue(currentValue + 1);
+      } else if (currentOption < options.length - 1) {
+        setCurrentOption(currentOption + 1);
+        setCurrentValue(0);
+      } else {
+        // All options and values have been evaluated
+        const finalScores = calculateFinalScores();
+        console.log('CoreValuesComparison finalScores:', finalScores);
+        localStorage.setItem('currentScores', JSON.stringify(finalScores));
+        nextStep(finalScores);
+      }
+      setDirection(null);
+    }, 300); // Wait for exit animation to complete
   };
 
   const calculateFinalScores = () => {
@@ -48,13 +64,6 @@ export default function CoreValuesSwiper({ issue, options, selectedCoreValues, p
       return acc;
     }, {});
   };
-
-  const handlers = useSwipeable({
-    onSwipedLeft: () => handleSwipe('left'),
-    onSwipedRight: () => handleSwipe('right'),
-    preventDefaultTouchmoveEvent: true,
-    trackMouse: true
-  });
 
   const renderCard = () => {
     if (!selectedCoreValues || selectedCoreValues.length === 0) {
@@ -69,63 +78,81 @@ export default function CoreValuesSwiper({ issue, options, selectedCoreValues, p
 
     const coreValue = selectedCoreValues[currentValue];
     return (
-      <Card {...handlers}>
-        <CardContent>
-          <Typography variant="h5">{coreValue.value}</Typography>
-          <Typography variant="body2">{coreValue.description}</Typography>
-        </CardContent>
-      </Card>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`${currentOption}-${currentValue}`}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={
+            direction === 'left'
+              ? { opacity: 0, x: -300, transition: { duration: 0.3 } }
+              : direction === 'right'
+              ? { opacity: 0, x: 300, transition: { duration: 0.3 } }
+              : { opacity: 0, scale: 0.8, transition: { duration: 0.3 } }
+          }
+          transition={{ duration: 0.3 }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          onDragEnd={handleDragEnd}
+        >
+          <Card sx={{ 
+            width: isMobile ? '90vw' : 300, 
+            height: isMobile ? 'auto' : 'auto',
+            maxWidth: 400,
+          }}>
+            <CardContent>
+              <Typography color='primary' variant={isMobile ? "h4" : "h3"} gutterBottom>{coreValue.value}</Typography>
+              <Typography variant="body2">{coreValue.description}</Typography>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </AnimatePresence>
     );
   };
 
-  if (!selectedCoreValues || selectedCoreValues.length === 0) {
-    return (
-      <Box className="space-y-4">
-        <Typography>No core values selected. Please go back and select some core values.</Typography>
-        <Button onClick={prevStep}>Back</Button>
-      </Box>
-    );
-  }
-
-  if (!options || options.length === 0) {
-    return (
-      <Box className="space-y-4">
-        <Typography>No options available</Typography>
-        <Button onClick={prevStep}>Back</Button>
-      </Box>
-    );
-  }
-
   return (
-    <Box className="space-y-8 flex flex-col h-[80vh] justify-center items-center">
-      <Box>
-        <Typography variant="h5" component="span">
+    <Box className="space-y-8 md:space-y-8 flex flex-col h-[80vh] justify-center items-center p-4">
+      <Box textAlign="center">
+        <Typography variant={isMobile ? "h6" : "h5"} component="span">
           addressing{' '}
         </Typography>
         <Typography 
-          variant="h2" 
+          variant={isMobile ? "h4" : "h2"} 
           component="span" 
           color="primary"
         >
           {issue}
         </Typography>
       </Box>
-      <Box>
-        <Typography variant="h5" component="span">
+      <Box textAlign="center">
+        <Typography variant={isMobile ? "h6" : "h5"} component="span">
           with{' '}
         </Typography>
         <Typography 
-          variant="h1" 
+          variant={isMobile ? "h3" : "h1"} 
           component="span" 
           color="secondary"
         >
           {options[currentOption]}
         </Typography>
+        <Typography textAlign="center">
+          is a proof of
+        </Typography>
       </Box>
-      {renderCard()}
-      <Box className="flex flex-col justify-between">
-        <Typography>Swipe right if this core value applies, left if it doesn't</Typography>
-        <Button  onClick={prevStep}>Back</Button>
+      <Box sx={{ 
+        position: 'relative', 
+        width: isMobile ? '90vw' : 300, 
+        height: isMobile ? 'auto' : 'auto',
+        maxWidth: 400,
+        margin: '20px 0'
+      }}>
+        {renderCard()}
+      </Box>
+      <Box className="flex flex-col items-center space-y-4">
+        <Typography textAlign="center">
+          Drag right if this core value applies, left if it doesn't
+        </Typography>
+        <Button onClick={prevStep} variant="outlined">Back</Button>
       </Box>
     </Box>
   );

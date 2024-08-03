@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Slider, List, ListItem, ListItemText, IconButton } from '@mui/material';
+import { Chip, Box, Typography, TextField, Button, Slider, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const weightMarks = [
@@ -44,16 +44,17 @@ export default function WeightedCriteriaInput({ nextStep, prevStep }) {
   };
 
   return (
-    <Box className="space-y-4">
-      <Typography variant="h2">Define Weighted Criteria</Typography>
+    <Box className="space-y-8 flex flex-col">
+      <Typography variant="h3">Define Weighted Criteria</Typography>
       <TextField
         fullWidth
         label="Criterion"
         value={newCriterion}
         onChange={(e) => setNewCriterion(e.target.value)}
       />
-      <Typography gutterBottom>Weight</Typography>
+      <div className='flex flex-col items-center'>
       <Slider
+        className='w-[90%]'
         value={newWeight}
         onChange={(_, value) => setNewWeight(value)}
         step={1}
@@ -62,23 +63,40 @@ export default function WeightedCriteriaInput({ nextStep, prevStep }) {
         max={4}
         valueLabelDisplay="auto"
       />
-      <Button variant="contained" onClick={handleAddCriterion}>Add Criterion</Button>
-      <List>
+      </div>
+      <Button className='mt-4' variant="contained" onClick={handleAddCriterion}>Add Criterion</Button>
+      <Box className="flex flex-wrap gap-2">
         {criteria.map((criterion, index) => (
-          <ListItem key={index} secondaryAction={
-            <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteCriterion(index)}>
-              <DeleteIcon />
-            </IconButton>
-          }>
-            <ListItemText 
-              primary={criterion.name} 
-              secondary={`Weight: ${weightMarks.find(mark => mark.value === criterion.weight).label}`} 
-            />
-          </ListItem>
+          <Chip
+            key={index}
+            label={
+              <Box>
+                <Typography variant="body2">{criterion.name}</Typography>
+                <Typography variant="caption" color="textSecondary">
+                  {weightMarks.find(mark => mark.value === criterion.weight).label}
+                </Typography>
+              </Box>
+            }
+            onDelete={() => handleDeleteCriterion(index)}
+            deleteIcon={<DeleteIcon />}
+            color="primary"
+            variant="outlined"
+            sx={{
+              height: 'auto',
+              '& .MuiChip-label': {
+                display: 'block',
+                whiteSpace: 'normal',
+                padding: '10px',
+              },
+              '& .MuiChip-deleteIcon': {
+                margin: '0 5px',
+              },
+            }}
+          />
         ))}
-      </List>
+      </Box>
       <Box className="flex justify-between">
-        <Button onClick={prevStep}>Back</Button>
+        <Button color='secondary' onClick={prevStep}>Back</Button>
         <Button variant="contained" onClick={handleNext} disabled={criteria.length === 0}>Next</Button>
       </Box>
     </Box>

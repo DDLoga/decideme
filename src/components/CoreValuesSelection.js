@@ -3,13 +3,13 @@ import { Box, Typography, Button, Card, CardContent, CardActionArea, Dialog, Dia
 
 
 const defaultCoreValues = [
-  { value: 'Self motivation', description: 'Taking action based on my own will rather than pleasing others' },
-  { value: 'Leadership', description: 'Leading by example' },
-  { value: 'Pragmatism', description: 'Fairness over moral, necessity over reasonability' },
+  { value: 'Being a Self Starter', description: 'Taking action based on my own will rather than reacting or pleasing others' },
+  { value: 'Leadership', description: 'Leading by example, inspiring others' },
+  { value: 'Pragmatism', description: 'Choosing Fairness over moral, necessity over reasonability' },
   { value: 'Trust & responsibility', description: 'Honoring my mentors and those believing in me' },
   { value: 'Challenge', description: 'Challenge my status quo, getting out of my comfort zone' },
   { value: 'Efficiency', description: 'Using my time and energy wisely to achieve my goals' },
-  { value: 'Altruism', description: 'Helping others' },
+  { value: 'Altruism', description: 'Providing benefits to others through my decision' },
 ];
 
 export default function CoreValuesSelection({ issue, options, prevStep, nextStep }) {
