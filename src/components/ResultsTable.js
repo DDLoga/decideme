@@ -1,15 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 
-export default function ResultsTable({ issue, options, prevStep }) {
-  const [scores, setScores] = useState({});
+export default function ResultsTable({ issue, options, scores: initialScores, prevStep }) {
+  const [scores, setScores] = useState(initialScores || {});
 
   useEffect(() => {
-    const storedScores = localStorage.getItem('weightedCriteriaScores') || localStorage.getItem('scores');
+    const storedScores = localStorage.getItem('currentScores');
+    console.log('Retrieved stored scores:', storedScores);
     if (storedScores) {
-      setScores(JSON.parse(storedScores));
+      const parsedScores = JSON.parse(storedScores);
+      console.log('Parsed scores:', parsedScores);
+      setScores(parsedScores);
     }
   }, []);
+
+  useEffect(() => {
+    console.log('scores', scores);
+  }, [scores]);
 
   const sortedOptions = [...options].sort((a, b) => scores[b] - scores[a]);
 

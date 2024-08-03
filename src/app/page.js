@@ -10,6 +10,8 @@ import CoreValuesSwiper from '../components/CoreValuesSwiper';
 import WeightedCriteriaInput from '../components/WeightedCriteriaInput';
 import WeightedCriteriaComparison from '../components/WeightedCriteriaComparison';
 import ResultsTable from '../components/ResultsTable';
+import ProConsInput from '../components/ProConsInput';
+import ProConsComparison from '../components/ProConsComparison';
 
 export default function Home() {
   const [step, setStep] = useState(1);
@@ -18,15 +20,22 @@ export default function Home() {
   const [comparisonMethod, setComparisonMethod] = useState(null);
   const [selectedCoreValues, setSelectedCoreValues] = useState([]);
   const [scores, setScores] = useState({});
+  const [pros, setPros] = useState([]);
+  const [cons, setCons] = useState([]);
 
   const nextStep = (data) => {
     if (step === 4 && Array.isArray(data)) {
       setSelectedCoreValues(data);
+    } else if (step === 4 && data.pros && data.cons) {
+      setPros(data.pros);
+      setCons(data.cons);
     } else if (step === 5 && typeof data === 'object') {
       setScores(data);
+      localStorage.setItem('currentScores', JSON.stringify(data));
     }
     setStep(step + 1);
   };
+
   const prevStep = () => setStep(step - 1);
 
   const renderStep = () => {
@@ -38,44 +47,29 @@ export default function Home() {
       case 3:
         return <ComparisonMethod setComparisonMethod={setComparisonMethod} nextStep={nextStep} prevStep={prevStep} />;
       case 4:
-        return comparisonMethod === 'core-values' ? (
-          <CoreValuesSelection 
-            issue={issue}
-            options={options}
-            prevStep={prevStep}
-            nextStep={nextStep}
-          />
-        ) : (
-          <WeightedCriteriaInput
-            prevStep={prevStep}
-            nextStep={nextStep}
-          />
-        );
-      case 5:
-        return comparisonMethod === 'core-values' ? (
-          <CoreValuesSwiper 
-            issue={issue} 
-            options={options} 
-            selectedCoreValues={selectedCoreValues}
-            prevStep={prevStep} 
-            nextStep={nextStep} 
-          />
-        ) : (
-          <WeightedCriteriaComparison
-            issue={issue}
-            options={options}
-            prevStep={prevStep}
-            nextStep={nextStep}
-          />
-        );
-      case 6:
-        return <ResultsTable 
-          issue={issue}
-          options={options}
-          scores={scores}
-          prevStep={() => setStep(3)}
-        />;
-      default:
+        switch (comparisonMethod) {
+          case 'core-values':
+            return <CoreValuesSelection issue={issue} options={options} prevStep={prevStep} nextStep={nextStep} />;
+          case 'weighted-criteria':
+            return <WeightedCriteriaInput prevStep={prevStep} nextStep={nextStep} />;
+          case 'pro-cons':
+            return <ProConsInput issue={issue} options={options} prevStep={prevStep} nextStep={nextStep} />;
+          default:
+            return <Typography>Invalid comparison method</Typography>;
+        }
+        case 5:
+          switch (comparisonMethod) {
+            case 'core-values':
+              return <CoreValuesSwiper issue={issue} options={options} selectedCoreValues={selectedCoreValues} prevStep={prevStep} nextStep={nextStep} />;
+            case 'weighted-criteria':
+              return <WeightedCriteriaComparison issue={issue} options={options} prevStep={prevStep} nextStep={nextStep} />;
+            case 'pro-cons':
+              return <ProConsComparison issue={issue} options={options} pros={pros} cons={cons} prevStep={prevStep} nextStep={nextStep} />;
+            default:
+              return <Typography>Invalid comparison method</Typography>;
+          }
+        case 6:
+          return <ResultsTable issue={issue} options={options} scores={scores} prevStep={() => setStep(3)} />;default:
         return <Typography>Invalid step</Typography>;
     }
   };
