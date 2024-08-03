@@ -6,9 +6,13 @@ export default function ResultsTable({ issue, options, scores: initialScores, pr
 
   useEffect(() => {
     const storedScores = localStorage.getItem('currentScores');
+    console.log('ResultsTable storedScores:', storedScores);
     if (storedScores) {
       const parsedScores = JSON.parse(storedScores);
+      console.log('ResultsTable parsedScores:', parsedScores);
       setScores(parsedScores);
+    } else {
+      console.log('No stored scores found');
     }
   }, []);
 

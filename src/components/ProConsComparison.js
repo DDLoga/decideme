@@ -48,7 +48,8 @@ export default function ProConsComparison({ issue, options, pros, cons, nextStep
       setCurrentScore(0);
     } else {
       const finalScores = calculateFinalScores();
-      localStorage.setItem('proConsScores', JSON.stringify(finalScores));
+      console.log('ProConsComparison finalScores:', finalScores);
+      localStorage.setItem('currentScores', JSON.stringify(finalScores));
       nextStep(finalScores);
     }
   };
