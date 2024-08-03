@@ -34,13 +34,9 @@ export default function ProConsComparison({ issue, options, pros, cons, nextStep
   }, [options, pros, cons]);
 
   const handleScoreChange = (_, value) => {
-    console.log('value', value);
     setCurrentScore(value);
   };
 
-  useEffect(() => {
-    console.log('comparisons', comparisons);
-  }, [comparisons]);
 
   const handleNext = () => {
     const updatedComparisons = [...comparisons];
@@ -52,7 +48,6 @@ export default function ProConsComparison({ issue, options, pros, cons, nextStep
       setCurrentScore(0);
     } else {
       const finalScores = calculateFinalScores();
-      console.log('finalScores', finalScores);
       localStorage.setItem('proConsScores', JSON.stringify(finalScores));
       nextStep(finalScores);
     }

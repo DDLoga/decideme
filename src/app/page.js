@@ -24,11 +24,13 @@ export default function Home() {
   const [cons, setCons] = useState([]);
 
   const nextStep = (data) => {
-    if (step === 4 && Array.isArray(data)) {
-      setSelectedCoreValues(data);
-    } else if (step === 4 && data.pros && data.cons) {
-      setPros(data.pros);
-      setCons(data.cons);
+    if (step === 4) {
+      if (comparisonMethod === 'core-values' && Array.isArray(data)) {
+        setSelectedCoreValues(data);
+      } else if (comparisonMethod === 'pro-cons' && data.pros && data.cons) {
+        setPros(data.pros);
+        setCons(data.cons);
+      }
     } else if (step === 5 && typeof data === 'object') {
       setScores(data);
       localStorage.setItem('currentScores', JSON.stringify(data));

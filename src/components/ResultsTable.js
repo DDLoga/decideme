@@ -6,17 +6,12 @@ export default function ResultsTable({ issue, options, scores: initialScores, pr
 
   useEffect(() => {
     const storedScores = localStorage.getItem('currentScores');
-    console.log('Retrieved stored scores:', storedScores);
     if (storedScores) {
       const parsedScores = JSON.parse(storedScores);
-      console.log('Parsed scores:', parsedScores);
       setScores(parsedScores);
     }
   }, []);
 
-  useEffect(() => {
-    console.log('scores', scores);
-  }, [scores]);
 
   const sortedOptions = [...options].sort((a, b) => scores[b] - scores[a]);
 
