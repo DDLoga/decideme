@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextField, Button, Box, List, ListItem, ListItemText, IconButton } from '@mui/material';
+import { Chip, Typography, TextField, Button, Box, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function OptionsInput({ options, setOptions, nextStep, prevStep }) {
@@ -28,6 +28,7 @@ export default function OptionsInput({ options, setOptions, nextStep, prevStep }
 
   return (
     <Box component="form" onSubmit={handleSubmit} className="space-y-4">
+      <Typography variant="h1" className="mb-4">What are your options?</Typography>
       <TextField
         fullWidth
         label="Enter an option"
@@ -38,24 +39,24 @@ export default function OptionsInput({ options, setOptions, nextStep, prevStep }
       <Button onClick={addOption} disabled={!newOption.trim()}>
         Add Option
       </Button>
-      <List>
+      <Box className="flex flex-wrap space-x-2">
         {options.map((option, index) => (
-          <ListItem key={index} secondaryAction={
-            <IconButton edge="end" aria-label="delete" onClick={() => removeOption(index)}>
-              <DeleteIcon />
-            </IconButton>
-          }>
-            <ListItemText primary={option} />
-          </ListItem>
+          <Chip 
+            key={index} 
+            label={option} 
+            onDelete={() => removeOption(index)} 
+            color="primary" 
+            size="large" 
+          />
         ))}
-      </List>
+      </Box>
       <Box className="flex justify-between">
-        <Button onClick={prevStep}>Back</Button>
+        <Button color="secondary" onClick={prevStep}>Back</Button>
         <Button type="submit" variant="contained" disabled={options.length < 2}>
           Next
         </Button>
       </Box>
-      <Button onClick={() => { setOptions([]); prevStep(); }}>
+      <Button color="secondary" onClick={() => { setOptions([]); prevStep(); }}>
         Reset
       </Button>
     </Box>

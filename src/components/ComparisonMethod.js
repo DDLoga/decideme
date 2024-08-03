@@ -7,7 +7,7 @@ export default function ComparisonMethod({ setComparisonMethod, nextStep, prevSt
   };
 
   return (
-    <Box className="space-y-4">
+    <Box className="space-y-8 h-[80vh] flex flex-col justify-center items-center">
       <Typography variant="h2">How to compare</Typography>
       <Button fullWidth variant="outlined" onClick={() => handleMethodSelect('core-values')}>
         Based on Core values
@@ -19,7 +19,7 @@ export default function ComparisonMethod({ setComparisonMethod, nextStep, prevSt
         Based on pro/cons comparison
       </Button>
       <Box className="flex justify-between">
-        <Button onClick={prevStep}>Back</Button>
+        <Button color="secondary" onClick={prevStep}>Back</Button>
       </Box>
     </Box>
   );

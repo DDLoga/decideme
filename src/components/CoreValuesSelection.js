@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Button, Checkbox, FormControlLabel, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Box, Typography, Button, Card, CardContent, CardActionArea, Dialog, DialogTitle, DialogContent, DialogActions, TextField, useTheme } from '@mui/material';
+
 
 const defaultCoreValues = [
   { value: 'Self motivation', description: 'Taking action based on my own will rather than pleasing others' },
@@ -12,6 +13,7 @@ const defaultCoreValues = [
 ];
 
 export default function CoreValuesSelection({ issue, options, prevStep, nextStep }) {
+  const theme = useTheme();
   const [coreValues, setCoreValues] = useState(defaultCoreValues);
   const [selectedValues, setSelectedValues] = useState([]);
   const [newValueDialog, setNewValueDialog] = useState(false);
@@ -45,17 +47,46 @@ export default function CoreValuesSelection({ issue, options, prevStep, nextStep
 
   return (
     <Box className="space-y-4">
-      <Typography variant="h2">Select Core Values</Typography>
-      {coreValues.map((cv, index) => (
-        <FormControlLabel
-          key={index}
-          control={<Checkbox checked={selectedValues.includes(cv.value)} onChange={() => handleValueSelect(cv.value)} />}
-          label={`${cv.value}: ${cv.description}`}
-        />
-      ))}
-      <Button onClick={() => setNewValueDialog(true)}>Add Core Value</Button>
+            <Typography 
+        variant="h2" 
+        className="sticky top-0 bg-black z-10 py-4 mb-4"
+        sx={{ boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+      >
+        Select Core Values
+      </Typography>
+      <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {coreValues.map((cv, index) => (
+          <Card 
+            key={index} 
+            raised={selectedValues.includes(cv.value)}
+            sx={{
+              transition: 'all 0.3s',
+              backgroundColor: selectedValues.includes(cv.value) 
+                ? `${theme.palette.primary.main}80` // 20 is for 12.5% opacity
+                : 'inherit',
+              '&:hover': {
+                backgroundColor: selectedValues.includes(cv.value) 
+                  ? `${theme.palette.primary.main}30` // 30 is for 18.75% opacity
+                  : theme.palette.action.hover,
+              },
+            }}
+          >
+            <CardActionArea onClick={() => handleValueSelect(cv.value)}>
+              <CardContent>
+                <Typography variant="h5" component="div" className="font-bold mb-2">
+                  {cv.value}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {cv.description}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        ))}
+      </Box>
+      <Button color="secondary" onClick={() => setNewValueDialog(true)}>Add Core Value</Button>
       <Box className="flex justify-between">
-        <Button onClick={prevStep}>Back</Button>
+        <Button color="secondary" onClick={prevStep}>Back</Button>
         <Button variant="contained" disabled={selectedValues.length === 0} onClick={handleNext}>Next</Button>
       </Box>
 

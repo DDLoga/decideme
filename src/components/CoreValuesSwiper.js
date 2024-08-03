@@ -97,13 +97,35 @@ export default function CoreValuesSwiper({ issue, options, selectedCoreValues, p
   }
 
   return (
-    <Box className="space-y-4">
-      <Typography variant="h2">{issue}</Typography>
-      <Typography variant="h3">{options[currentOption]}</Typography>
+    <Box className="space-y-8 flex flex-col h-[80vh] justify-center items-center">
+      <Box>
+        <Typography variant="h5" component="span">
+          addressing{' '}
+        </Typography>
+        <Typography 
+          variant="h2" 
+          component="span" 
+          color="primary"
+        >
+          {issue}
+        </Typography>
+      </Box>
+      <Box>
+        <Typography variant="h5" component="span">
+          with{' '}
+        </Typography>
+        <Typography 
+          variant="h1" 
+          component="span" 
+          color="secondary"
+        >
+          {options[currentOption]}
+        </Typography>
+      </Box>
       {renderCard()}
-      <Box className="flex justify-between">
-        <Button onClick={prevStep}>Back</Button>
+      <Box className="flex flex-col justify-between">
         <Typography>Swipe right if this core value applies, left if it doesn't</Typography>
+        <Button  onClick={prevStep}>Back</Button>
       </Box>
     </Box>
   );

@@ -77,8 +77,8 @@ export default function Home() {
   };
 
   return (
-    <Box className="container mx-auto p-4">
-      <Typography variant="h1" className="mb-4">Decision Helper</Typography>
+    <Box className="container mx-auto p-4 h-[100vh]">
+      <Typography variant="h4" className="mb-4">DecideMe</Typography>
       {renderStep()}
     </Box>
   );

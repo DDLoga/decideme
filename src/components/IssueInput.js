@@ -11,7 +11,11 @@ export default function IssueInput({ issue, setIssue, nextStep }) {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} className="space-y-4">
+    <Box 
+      component="form" 
+      onSubmit={handleSubmit} 
+      className="h-[80vh] flex flex-col space-y-8 justify-center items-center"
+      >
       <TextField
         fullWidth
         label="Issue to be addressed"
